@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17253b">
+<meta name="description" content="NORTH: transforme tarefas em moedas e moedas em créditos de lazer.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NORTH">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="north-icon-192.png">
+<link rel="icon" href="north-icon-192.png">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<link rel="stylesheet" href="layout.css">
+<title>NORTH — sua direção</title>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img src="north-icon-192.png" alt="Símbolo NORTH">
+    <div><h1>NORTH</h1><p>Sua vida, no seu ritmo.</p></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section data-view="home" class="view">
+    <div class="card hero-card">
+      <div class="row"><span class="muted">Minha carteira</span><span class="pill">NORTH V1.3.2</span></div>
+      <div class="balance" id="balance">0 moedas</div>
+      <div class="muted small">Saldo calculado pelo extrato de lançamentos.</div>
+    </div>
+    <div class="grid">
+      <div class="card stat-card"><div class="muted small">Missões concluídas hoje</div><strong id="today-count">0</strong></div>
+      <div class="card stat-card"><div class="muted small">Minutos disponíveis</div><strong id="credit-count">0 min</strong></div>
+    </div>
+    <div class="card">
+      <div class="row"><h2 class="section-title">Missões de hoje</h2><button class="text-button" data-go="missions">Ver todas</button></div>
+      <div id="home-missions"></div>
+    </div>
+    <div class="card guidance-card">
+      <div class="eyebrow">A direção é sua</div>
+      <h2 class="section-title">Faça primeiro o que importa.</h2>
+      <p class="muted">Conclua missões, ganhe moedas e transforme seu esforço em créditos de lazer. Você define seus temas, recompensas e apps que quer limitar.</p>
+      <button class="button secondary" data-go="customize">Personalizar meu NORTH</button>
+    </div>
+  </section>
+
+  <section data-view="missions" hidden class="view">
+    <div class="card">
+      <div class="row"><div><div class="eyebrow">Ação</div><h2 class="section-title">Minhas missões</h2></div><span class="pill">Moedas por progresso</span></div>
+      <p class="muted small">Missões novas e alterações de ativação entram em vigor no dia seguinte para proteger seu compromisso de hoje.</p>
+      <div id="missions-list"></div>
+      <hr class="soft-divider">
+      <h3>Nova missão</h3>
+      <form id="mission-form">
+        <label class="field">Nome da missão<input name="name" required maxlength="80" placeholder="Ex.: resolver 5 exercícios de Cálculo"></label>
+        <label class="field">Tema<select id="mission-category" name="category" required></select></label>
+        <div class="grid form-grid">
+          <label class="field">Recompensa em moedas<input name="reward" type="number" min="1" step="1" value="20" required></label>
+          <label class="field">Recorrência<select name="recurrence"><option value="daily">Diária</option><option value="weekly">Semanal</option><option value="once">Única</option></select></label>
+        </div>
+        <button class="button" type="submit">Programar missão</button>
+      </form>
+    </div>
+  </section>
+
+  <section data-view="shop" hidden class="view">
+    <div class="card">
+      <div class="eyebrow">Recompensas</div><h2 class="section-title">Loja de lazer</h2>
+      <div class="notice"><strong>Como funciona:</strong> minutos comprados ficam guardados, sem cronômetro e sem expiração automática. Quando você usar o tempo, registre manualmente os minutos consumidos. O NORTH não consegue ler o uso real de TikTok/Instagram nem retirar o limite nativo do iPhone automaticamente.</div>
+      <div class="balance-summary"><span>Crédito de lazer disponível</span><strong id="available-minutes">0 min</strong></div>
+      <div id="rewards-list"></div>
+      <hr class="soft-divider">
+      <h3>Nova recompensa</h3>
+      <form id="reward-form">
+        <label class="field">Nome<input name="name" required maxlength="80" placeholder="Ex.: 15 minutos de TikTok"></label>
+        <div class="grid form-grid">
+          <label class="field">Custo em moedas<input id="reward-cost" name="cost" type="number" min="1" step="1" value="20" required></label>
+          <label class="field">Minutos comprados<input id="reward-minutes" name="minutes" type="number" min="15" step="15" value="15" required></label>
+        </div>
+        <p class="muted small" id="credit-step-hint">Minutos em blocos de 15.</p>
+        <button class="button" type="submit">Programar recompensa</button>
+      </form>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Carteira de lazer</div><h2 class="section-title">Meus créditos</h2>
+      <p class="muted small">Os créditos acumulam. Nenhum contador começa sozinho.</p>
+      <div id="credits-list"></div>
+      <hr class="soft-divider">
+      <h3>Registrar tempo utilizado</h3>
+      <p class="muted small">Depois de usar uma parte do tempo comprado, informe quantos minutos foram gastos. Essa baixa é manual, pois a versão web não recebe o tempo de tela dos outros apps.</p>
+      <form id="usage-form">
+        <div class="grid form-grid">
+          <label class="field">Minutos usados<input id="usage-minutes" name="minutes" type="number" min="15" step="15" required placeholder="15"></label>
+          <label class="field">App utilizado<select id="usage-app" name="appName"></select></label>
+        </div>
+        <button class="button" type="submit">Registrar minutos utilizados</button>
+      </form>
+      <h3 class="subsection-title">Histórico de uso</h3><div id="usage-history"></div>
+    </div>
+  </section>
+
+  <section data-view="insights" hidden class="view">
+    <div class="card">
+      <div class="eyebrow">Visão da sua rotina</div><h2 class="section-title">Insights</h2>
+      <p class="muted small">Acompanhe o tempo registrado em estudos, trabalho, exercícios, lazer e redes sociais. O NORTH não lê o Tempo de Uso automaticamente: registre as redes sociais consultando Ajustes → Tempo de Uso.</p>
+      <div class="grid">
+        <div class="card stat-card"><div class="muted small">Produtividade · últimos 7 dias</div><strong id="insights-productive">0 h</strong></div>
+        <div class="card stat-card"><div class="muted small">Redes sociais · últimos 7 dias</div><strong id="insights-social">0 h</strong></div>
+      </div>
+      <h3>Distribuição do tempo</h3><div id="insights-category-chart" class="chart-list"></div>
+      <h3 class="subsection-title">Últimos 7 dias</h3><div id="insights-week-chart" class="week-chart"></div>
+      <p class="muted small">Os gráficos refletem os registros que você inserir no NORTH. Não representam medições automáticas do iPhone.</p>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Diário de tempo</div><h2 class="section-title">Registrar atividade</h2>
+      <form id="time-record-form">
+        <label class="field">Categoria<select name="category" required><option value="Estudos">Estudos</option><option value="Trabalho">Trabalho</option><option value="Programação">Programação</option><option value="Exercícios">Exercícios</option><option value="Leitura">Leitura</option><option value="Tarefas domésticas">Tarefas domésticas</option><option value="Redes sociais">Redes sociais</option><option value="Vídeos e entretenimento">Vídeos e entretenimento</option><option value="Jogos">Jogos</option><option value="Lazer offline">Lazer offline</option><option value="Outro">Outro</option></select></label>
+        <label class="field">Atividade ou aplicativo<input name="label" maxlength="80" placeholder="Ex.: Cálculo, Instagram, academia"></label>
+        <div class="grid form-grid">
+          <label class="field">Duração em minutos<input name="minutes" type="number" min="1" max="1440" step="1" required placeholder="30"></label>
+          <label class="field">Data<input name="date" type="date" required></label>
+        </div>
+        <button class="button" type="submit">Salvar registro</button>
+      </form>
+    </div>
+    <div class="card"><div class="row"><h3>Registros recentes</h3><button id="clear-time-records" class="text-button" type="button">Limpar registros</button></div><div id="time-record-list"></div></div>
+  </section>
+
+  <section data-view="customize" hidden class="view">
+    <div class="card">
+      <div class="eyebrow">Seu NORTH</div><h2 class="section-title">Personalize seus temas</h2>
+      <p class="muted">Ative os temas que combinam com sua rotina. Eles aparecem no formulário de novas missões. Criar um tema novo não altera nem apaga as missões existentes.</p>
+      <div class="row section-meta"><span id="active-theme-count" class="pill">0 temas ativos</span></div>
+      <div id="theme-options" class="choice-list"></div>
+      <form id="theme-form" class="add-inline">
+        <label class="field">Criar meu próprio tema<input id="new-theme" maxlength="40" placeholder="Ex.: Inglês, Futebol, Família"></label>
+        <button class="button" type="submit">Adicionar tema</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Tempo de Uso</div><h2 class="section-title">Quais apps você quer limitar?</h2>
+      <div class="notice"><strong>Importante:</strong> esta lista é sua configuração de intenção no NORTH; ela não modifica o iOS. Para o limite funcionar de verdade, configure os mesmos apps em Ajustes → Tempo de Uso. O NORTH não detecta o uso real dos apps nem libera automaticamente minutos comprados.</div>
+      <div class="row section-meta"><span id="restricted-count" class="pill">2 selecionados para limitar</span></div>
+      <div id="app-rules" class="app-rules"></div>
+      <form id="app-form" class="add-inline">
+        <label class="field">Adicionar outro app/site<input id="new-app" maxlength="60" placeholder="Ex.: Netflix, navegador, jogo"></label>
+        <label class="field">Preferência inicial<select id="new-app-mode"><option value="restrict">Quero limitar</option><option value="allow">Manter livre</option></select></label>
+        <button class="button" type="submit">Adicionar à lista</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Preferências</div><h2 class="section-title">Regras de recompensas</h2>
+      <p class="muted small">Escolha se as quantidades de tempo aumentam de 1 em 1 minuto ou em blocos de 15. Isso vale para criar recompensas e registrar minutos utilizados.</p>
+      <label class="field">Incremento de tempo<select id="minute-step"><option value="1">1 minuto por vez</option><option value="15">15 minutos por vez</option></select></label>
+      <label class="field">Custo padrão de recompensa (moedas)<input id="coins-per-reward" type="number" min="1" step="1" value="20"></label>
+      <label class="field">Minutos padrão por recompensa<input id="minutes-per-reward" type="number" min="1" step="1" value="15"></label>
+      <hr class="soft-divider">
+      <h3>Espelho e recuperação</h3>
+      <label class="field">URL do Apps Script (/exec)<input id="sheets-url" type="url" placeholder="https://script.google.com/macros/s/.../exec"></label>
+      <label class="field">Token do espelho<input id="sync-token" type="password" autocomplete="off" placeholder="Token do Apps Script"></label>
+      <button class="button" id="save-settings" type="button">Salvar preferências</button>
+      <div class="button-stack">
+        <button class="button secondary" id="sync-now" type="button">Sincronizar com a planilha</button>
+        <button class="button secondary" id="restore-sheet" type="button">Restaurar da planilha</button>
+      </div>
+      <p class="muted small">Faça backup JSON semanalmente. O token usado no navegador não é um segredo forte.</p>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Configuração do iPhone</div><h2 class="section-title">Aplicar os limites reais</h2>
+      <ol class="steps">
+        <li>Abra <strong>Ajustes → Tempo de Uso → Limites de Apps</strong> e adicione os apps marcados como “Quero limitar” no NORTH.</li>
+        <li>Ative a opção para bloquear ao atingir o limite, se disponível na versão do iOS.</li>
+        <li>Defina uma senha de Tempo de Uso adequada ao seu objetivo e mantenha em mente que os próprios controles do iPhone podem oferecer opções para ignorar o limite.</li>
+        <li>Quando o iPhone mostrar opções como “Mais um minuto” ou “Lembrar em 15 minutos”, use-as de acordo com seus créditos comprados. O NORTH não valida nem aciona esses botões.</li>
+      </ol>
+      <p class="muted small">O Atalhos pode mostrar um lembrete ao abrir um app, mas é contornável e não bloqueia o aplicativo. Limites de apps são a restrição real disponível sem desenvolver um app nativo.</p>
+    </div>
+  </section>
+
+  <section data-view="ledger" hidden class="view">
+    <div class="card">
+      <div class="eyebrow">Transparência</div><h2 class="section-title">Extrato de moedas</h2>
+      <p class="muted small">Lançamentos financeiros são permanentes. Correções são registradas por estornos.</p>
+      <div id="ledger-list"></div>
+      <hr class="soft-divider">
+      <button class="button secondary" id="reverse-entry" type="button">Estornar lançamento por ID</button>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Segurança dos dados</div><h2 class="section-title">Backup e restauração</h2>
+      <p class="muted small">Os dados ficam no aparelho. Exporte o JSON e guarde em um local seguro.</p>
+      <div class="button-stack">
+        <button class="button" id="export-backup" type="button">Exportar backup JSON</button>
+        <label class="button secondary file-button">Importar backup JSON<input id="import-backup" type="file" accept="application/json,.json" hidden></label>
+      </div>
+      <p id="backup-status" class="muted small" role="status"></p>
+    </div>
+  </section>
+</main>
+
+<nav class="nav" aria-label="Navegação principal">
+  <button data-nav="home" aria-current="page"><span>⌂</span>Hoje</button>
+  <button data-nav="missions" aria-current="false"><span>✓</span>Missões</button>
+  <button data-nav="shop" aria-current="false"><span>◈</span>Lazer</button>
+  <button data-nav="insights" aria-current="false"><span>▥</span>Insights</button>
+  <button data-nav="customize" aria-current="false"><span>⚙</span>Personalizar</button>
+  <button data-nav="ledger" aria-current="false"><span>☷</span>Carteira</button>
+</nav>
+<script type="module" src="app.js"></script>
+</body>
+</html>

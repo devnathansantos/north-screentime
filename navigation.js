@@ -1,0 +1,1 @@
+export function showView(name){document.querySelectorAll('[data-view]').forEach(el=>el.hidden=el.dataset.view!==name);document.querySelectorAll('[data-nav]').forEach(el=>el.setAttribute('aria-current',el.dataset.nav===name?'page':'false'));}

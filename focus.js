@@ -1,0 +1,1 @@
+export function createFocusSession(minutes=25){if(!Number.isInteger(minutes)||minutes<1||minutes>180)throw new Error('Duração deve ficar entre 1 e 180 minutos.');return {id:crypto.randomUUID(),minutes,startedAt:new Date().toISOString(),endsAt:new Date(Date.now()+minutes*60000).toISOString()};}
